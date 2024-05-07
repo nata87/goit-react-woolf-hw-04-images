@@ -32,21 +32,23 @@ const App = () => {
 
   useEffect(() => {
     const setImages = async () => {
-      try {
-        const {
-          data: { hits, totalHits },
-        } = await getPhotoGallery(query, page, PER_PAGE);
-        const newPhotos = hits.map(({ id, webformatURL, largeImageURL }) => {
-          return { id, webformatURL, largeImageURL };
-        });
-        setState(prevState => ({
-          ...prevState,
-          galleryPhotos: [...prevState.galleryPhotos, ...newPhotos],
-          totalHits,
-          isLoading: false,
-        }));
-      } catch (error) {
-        setState({ ...INITIAL_STATE });
+      if (query) {
+        try {
+          const {
+            data: { hits, totalHits },
+          } = await getPhotoGallery(query, page, PER_PAGE);
+          const newPhotos = hits.map(({ id, webformatURL, largeImageURL }) => {
+            return { id, webformatURL, largeImageURL };
+          });
+          setState(prevState => ({
+            ...prevState,
+            galleryPhotos: [...prevState.galleryPhotos, ...newPhotos],
+            totalHits,
+            isLoading: false,
+          }));
+        } catch (error) {
+          setState({ ...INITIAL_STATE });
+        }
       }
     };
 

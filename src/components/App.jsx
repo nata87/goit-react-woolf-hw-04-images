@@ -6,29 +6,16 @@ import Modal from './Modal/Modal';
 import Loader from './Loader/Loader';
 import { getPhotoGallery } from '../API';
 
-const INITIAL_STATE = {
-  galleryPhotos: [],
-  query: '',
-  page: 0,
-  totalHits: 0,
-  isLoading: false,
-  isModalOpen: false,
-  currentPhotoUrl: '',
-};
-
 const PER_PAGE = 12;
 
 const App = () => {
-  const [state, setState] = useState({ ...INITIAL_STATE });
-  const {
-    page,
-    query,
-    galleryPhotos,
-    isLoading,
-    totalHits,
-    isModalOpen,
-    currentPhotoUrl,
-  } = state;
+  const [page, setPage] = useState(0);
+  const [query, setQuery] = useState('');
+  const [galleryPhotos, setGalleryPhotos] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [totalHits, setTotalHits] = useState(0);
+  const [currentPhotoUrl, setCurrentPhotoUrl] = useState('');
 
   useEffect(() => {
     const setImages = async () => {
@@ -40,14 +27,11 @@ const App = () => {
           const newPhotos = hits.map(({ id, webformatURL, largeImageURL }) => {
             return { id, webformatURL, largeImageURL };
           });
-          setState(prevState => ({
-            ...prevState,
-            galleryPhotos: [...prevState.galleryPhotos, ...newPhotos],
-            totalHits,
-            isLoading: false,
-          }));
+          setGalleryPhotos(prev => [...prev, ...newPhotos]);
+          setTotalHits(totalHits);
+          setIsLoading(false);
         } catch (error) {
-          setState({ ...INITIAL_STATE });
+          console.log(error);
         }
       }
     };
@@ -56,34 +40,22 @@ const App = () => {
   }, [page, query]);
 
   const handlerSubmit = query => {
-    setState(prevState => ({
-      ...INITIAL_STATE,
-      isLoading: true,
-      query,
-      page: 1,
-    }));
+    setIsLoading(true);
+    setQuery(query);
+    setPage(1);
   };
 
   const handleLoadMore = () => {
-    setState(prevState => ({
-      ...prevState,
-      page: prevState.page + 1,
-    }));
+    setPage(prev => prev.page + 1);
   };
 
   const handleModalClose = () => {
-    setState(prevState => ({
-      ...prevState,
-      isModalOpen: false,
-    }));
+    setIsModalOpen(true);
   };
 
   const handleModalOpen = largeImageURL => {
-    setState(prevState => ({
-      ...prevState,
-      isModalOpen: true,
-      currentPhotoUrl: largeImageURL,
-    }));
+    setIsModalOpen(true);
+    setCurrentPhotoUrl(largeImageURL);
   };
 
   return (

@@ -3,18 +3,18 @@ import styles from './Modal.module.css';
 
 const Modal = ({ url, onModalClose }) => {
   useEffect(() => {
+    const handleKeydownESC = event => {
+      if (event.key === 'Escape') {
+        onModalClose();
+      }
+    };
+
     document.addEventListener('keydown', handleKeydownESC);
     return () => document.removeEventListener('keydown', handleKeydownESC);
-  });
+  }, [onModalClose]);
 
   const handleDropDownClick = event => {
     if (event.target.id === 'Overlay') {
-      onModalClose();
-    }
-  };
-
-  const handleKeydownESC = event => {
-    if (event.key === 'Escape') {
       onModalClose();
     }
   };
